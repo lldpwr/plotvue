@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petite-Vue Counter</title>
+    <link rel="stylesheet" href="styles/main.css">
+
+
+</head>
+
+<body>
+    <h1>Test Petite-Vue Counter</h1>
+    <script src="https://unpkg.com/petite-vue@0.4.1/dist/petite-vue.iife.js"></script>
+    <script src="https://unpkg.com/plotly.js-dist"></script>
+    <script src="components/TestComponent.js"></script>
+    <script src="components/GraphComponent.js"></script>
+    <script src="components/NavigateComponent.js"></script>
+
+    <template id="counter-template">
+        My count is {{ count }}
+        <button @click="inc">++</button>
+    </template>
+
+    <template id="graph-template">
+        <p>Test Graph</p>
+        <div :id="id"></div>
+        <div>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th v-for="(header, index) in data[0].x">{{header}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(category, index) in data">
+                        <td v-for="(value, index) in category.y">{{ value }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </template>
+
+    <template id="navigate-template">
+    </template>
+
+    <script>
+        data_layout = {
+            id: 'myBarGraph',
+            data: [{
+                x: ['Category A', 'Category B', 'Category C'],
+                y: [20, 14, 23],
+                type: 'bar'
+            }],
+
+            layout: {
+                title: 'Simple Bar Graph',
+                xaxis: {
+                    title: 'Categories'
+                },
+                yaxis: {
+                    title: 'Values'
+                }
+            }
+        };
+
+
+        data_layout2 = {
+            id: 'myBarGraph2',
+            data: [
+                {
+                    x: ['Category A', 'Category B', 'Category C'],
+                    y: [20, 14, 23],
+                    name: 'Series 1',
+                    type: 'bar',
+                    marker: {
+                        color: 'rgb(49,130,189)'
+                    },
+                    width: 0.2,
+                    offset: 0.2,
+                    text: ['Series 1', 'Series 1', 'Series 1'], // Text for hover for each bar
+                    hovertemplate: '%{text}<br>Value: %{y}<extra></extra>' // Custom hover template
+
+                },
+                {
+                    x: ['Category A', 'Category B', 'Category C'],
+                    y: [35, 27, 40],
+                    name: 'Series 2',
+                    type: 'bar',
+                    marker: {
+                        color: 'rgb(204,204,204)'
+                    },
+                    yaxis: 'y2',
+                    width: 0.2,
+                    text: ['Series 2', 'Series 2', 'Series 2'], // Text for hover for each bar
+                    hovertemplate: '%{text}<br>Value: %{y}<extra></extra>' // Custom hover template
+                }
+            ],
+            layout: {
+                title: 'Dual Y Axis Bar Chart',
+                xaxis: {
+                    tickangle: -45
+                },
+                yaxis: {
+                    title: 'Y Axis for Series 1'
+                },
+                yaxis2: {
+                    title: 'Y Axis for Series 2',
+                    overlaying: 'y',
+                    side: 'right'
+                },
+                barmode: 'group'
+            }
+        }
+
+    </script>
+
+
+    <div v-scope="Navigate({ currentRoute: window.location.pathname })">
+        <button v-on:click="navigate('/')">Home</button>
+        <button v-on:click="navigate('/about')">About</button>
+
+        <div v-if="currentRoute === '/'">
+            <div v-scope="Counter({ initialCount: 1 })"></div>
+            <div v-scope="Graph(data_layout)" @vue:mounted="mounted"></div>
+        </div>
+        <div v-if="currentRoute === '/about'">
+            <h1>About Page</h1>
+            <div v-scope="Graph(data_layout2)" @vue:mounted="mounted"></div>
+        </div>
+    </div>
+
+    <script src="src/main.js"></script>
+
+</body>
+
+</html>
